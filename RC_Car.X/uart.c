@@ -16,3 +16,8 @@ void UART_SendByte(uint8_t data){
     while(PIR1bits.TXIF == 0);  // wait if there is data had not transmitted
     TXREG = data;           // PUT THE DATA ON THE REGISTER
 }
+
+uint8_t UART_ReceiveByte(void){
+    while(PIR1bits.RCIF == 0);
+    return RCREG;
+}

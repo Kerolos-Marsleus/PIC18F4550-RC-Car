@@ -12,13 +12,13 @@
 #define LED_DIR TRISDbits.TRISD0
 #define LED     LATDbits.LATD0
 
-#define RESET_LED_DIR   TRISAbits.RA0
-#define RESET_LED       LATAbits.LA0
+#define RESET_LED_DIR   TRISAbits.TRISA0
+#define RESET_LED       LATAbits.LATA0
     
 void main(void) {
-    ADCON1 = 0x0F;
-    RESET_LED_DIR = 0;
+    ADCON1 = 0x0F; // ALL PINS ARE DIGITAL
     RESET_LED = 1;
+    RESET_LED_DIR = 0;
     __delay_ms(100);
     RESET_LED = 0;
     LED_DIR = 0;

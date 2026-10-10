@@ -13,6 +13,7 @@
 void UART_Init(void);
 // send one byte to uart module
 void UART_SendByte(uint8_t data);
-
+// recieve one byte 
+uint8_t UART_ReceiveByte(void);
 #endif	/* UART_H */
 
