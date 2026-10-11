@@ -9,6 +9,7 @@ void UART_Init(void){
     SPBRG = 25;             // baud rate 9600 with 16Mhz crystal
     TXSTA = (1 << _TXSTA_TXEN_POSN); // tx enabled, async, 8-bit, low speed
     RCSTA = (1 <<_RCSTA_SPEN_POSN) | (1 << _RCSTA_CREN_POSN);
+    PIE1bits.RCIE = 1;
 }
 
 
@@ -18,6 +19,9 @@ void UART_SendByte(uint8_t data){
 }
 
 uint8_t UART_ReceiveByte(void){
-    while(PIR1bits.RCIF == 0);
+    if(RCSTAbits.OERR == 1){    // overrun: receiver locked
+        RCSTAbits.CREN = 0;     // reset overrun by toggling cren
+        RCSTAbits.CREN = 1;
+    }
     return RCREG;
 }

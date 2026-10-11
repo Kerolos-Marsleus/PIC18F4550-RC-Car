@@ -14,6 +14,9 @@
 #define RESET_LED_DIR   TRISAbits.TRISA0
 #define RESET_LED       LATAbits.LATA0
 
+// shared between ISR and main
+volatile uint8_t rx_data;
+volatile uint8_t rx_flag;
 void main(void) {
     
     ADCON1 = 0x0F;          // ALL PINS ARE DIGITAL
@@ -23,8 +26,23 @@ void main(void) {
     RESET_LED = 0;
     
     UART_Init();
+    INTCONbits.PEIE = 1;
+    INTCONbits.GIE = 1;
+    
     while(1){
-        uint8_t data = UART_ReceiveByte();
-        UART_SendByte(data);
+        if(rx_flag == 1){
+            rx_flag = 0;
+            UART_SendByte(rx_data);
+        }
+        __delay_ms(500);
+    }
+}
+
+void __interrupt() ISR(void)
+{   
+    if(PIR1bits.RCIF == 1){
+        rx_data = UART_ReceiveByte();
+        rx_flag = 1;
+        
     }
 }
