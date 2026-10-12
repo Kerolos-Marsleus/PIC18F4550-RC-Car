@@ -32,9 +32,8 @@ void main(void) {
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
-            UART_SendByte(rx_data);
+            
         }
-        __delay_ms(500);
     }
 }
 

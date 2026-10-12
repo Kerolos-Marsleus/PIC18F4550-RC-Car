@@ -3,3 +3,16 @@ dist/
 debug/
 **/nbproject/private/
 .LCK*
+
+.generated_files/
+nbproject/
+Makefile*
+Package-*
+private/
+_build/
+!cmake/**/user.cmake
+cmake/**/.generated/*
+cmake/**/CMake*
+out/_build/
+out/
+**/.generated/
