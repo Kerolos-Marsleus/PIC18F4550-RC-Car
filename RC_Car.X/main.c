@@ -5,10 +5,11 @@
  * Created on October 10, 2026, 8:55 PM
  */
 
-
+ 
 #include <xc.h>
 #include "uart.h"
 #include "motor.h"
+#include "pwm.h"
 
 #define _XTAL_FREQ 16000000UL
 
@@ -27,14 +28,17 @@ void main(void) {
     RESET_LED = 0;
     
     UART_Init();
+    PWM_Init();
     Motor_Init();
+    Motor_SetSpeed(0, 0);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
     
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
-            switch (rx_data) {
+            uint8_t comand = rx_data;
+            switch (comand) {
                 case 'F':
                     Motor_SetDirection(MOTOR_FWD);
                     break;
@@ -50,9 +54,15 @@ void main(void) {
                 case 'S':
                     Motor_SetDirection(MOTOR_STOP);
                     break;
+                case 'q':
+                    Motor_SetSpeed(100, 100);
+                    break;
                 default:
                     break;
-
+            }
+            if(comand >= '0' && comand <= '9'){
+                uint8_t speed = (comand - '0') * 10;
+                Motor_SetSpeed(speed, speed);
             }
         }
     }

@@ -1,3 +1,6 @@
+// require PWM_Init() to run first
+// speed from 0 to 100%
+
 #ifndef MOTOR_H
 #define	MOTOR_H
 
@@ -13,5 +16,6 @@
 
 void Motor_Init(void);
 void Motor_SetDirection(uint8_t pattern);
+void Motor_SetSpeed(uint8_t left_speed, uint8_t right_speed);
 
 #endif	/* MOTOR_H */
