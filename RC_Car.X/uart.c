@@ -25,3 +25,20 @@ uint8_t UART_ReceiveByte(void){
     }
     return RCREG;
 }
+
+void UART_SendNumber(uint16_t number){
+    uint8_t arr[5];
+    uint8_t count = 0;
+    do{
+        uint8_t digit = number % 10;
+        arr[count] = digit;
+        number /= 10;
+        count++;
+    }while(number > 0);
+
+    while(count > 0){
+        count--;
+        UART_SendByte(arr[count]+'0');
+    }
+    
+}

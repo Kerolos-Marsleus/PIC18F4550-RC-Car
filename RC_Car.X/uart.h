@@ -15,5 +15,7 @@ void UART_Init(void);
 void UART_SendByte(uint8_t data);
 // recieve one byte 
 uint8_t UART_ReceiveByte(void);
+
+void UART_SendNumber(uint16_t number);
 #endif	/* UART_H */
 

@@ -7,11 +7,12 @@
 
  
 #include <xc.h>
+#include "configure.h"
 #include "uart.h"
 #include "motor.h"
 #include "pwm.h"
+#include "ultrasonic.h"
 
-#define _XTAL_FREQ 16000000UL
 
 #define RESET_LED_DIR   TRISAbits.TRISA0
 #define RESET_LED       LATAbits.LATA0
@@ -30,6 +31,7 @@ void main(void) {
     UART_Init();
     PWM_Init();
     Motor_Init();
+    Ultrasonic_Init();
     Motor_SetSpeed(0, 0);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
@@ -64,6 +66,20 @@ void main(void) {
                 uint8_t speed = (comand - '0') * 10;
                 Motor_SetSpeed(speed, speed);
             }
+
+        }
+        // test Ultrasonic  
+        uint16_t distance = Ultrasonic_GetDistance();
+        if(distance == US_NO_ECHO){
+            UART_SendByte('E');
+            UART_SendByte('\r');
+            UART_SendByte('\n');
+            __delay_ms(100);
+        }else{
+            UART_SendNumber(distance);
+            UART_SendByte('\r');
+            UART_SendByte('\n');
+            __delay_ms(100);
         }
     }
 }
