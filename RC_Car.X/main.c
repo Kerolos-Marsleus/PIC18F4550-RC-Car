@@ -12,6 +12,7 @@
 #include "motor.h"
 #include "pwm.h"
 #include "ultrasonic.h"
+#include "obstacle.h"
 
 
 #define RESET_LED_DIR   TRISAbits.TRISA0
@@ -102,19 +103,16 @@ void main(void) {
                 Motor_SetSpeed(speed, speed);
             }
         }
-        // test Ultrasonic  
-        uint16_t distance = Ultrasonic_GetDistance();
-        if(distance == US_NO_ECHO){
-            UART_SendByte('E');
-            UART_SendByte('\r');
-            UART_SendByte('\n');
-            __delay_ms(100);
-        }else{
-            UART_SendNumber(distance);
-            UART_SendByte('\r');
-            UART_SendByte('\n');
-            __delay_ms(100);
+        switch (mode) {
+            case MODE_OBSTACLE:
+                Obstacle_Run();
+                break;
+            
+            default:
+                break;
         }
+        
+        
     }
 }
 
