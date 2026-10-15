@@ -1,0 +1,4 @@
+- Diagonals G/I/H/J (curve: both FWD, inner wheel slower, respect MIN_START)
+- Dead-zone speed mapping (MIN_START)
+- Non-blocking timer (Timer0 1 ms tick) to replace delays
+- Battery voltage monitor (ADC)

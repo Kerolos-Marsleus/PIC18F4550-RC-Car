@@ -16,6 +16,11 @@
 
 #define RESET_LED_DIR   TRISAbits.TRISA0
 #define RESET_LED       LATAbits.LATA0
+#define MODE_MANUAL     1
+#define MODE_OBSTACLE   2
+#define MODE_LINE       3
+#define MODE_MAZE       4
+
 
 // shared between ISR and main
 volatile uint8_t rx_data;
@@ -35,38 +40,67 @@ void main(void) {
     Motor_SetSpeed(0, 0);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
+    uint8_t mode = MODE_MANUAL;
     
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
-            uint8_t comand = rx_data;
-            switch (comand) {
-                case 'F':
-                    Motor_SetDirection(MOTOR_FWD);
-                    break;
-                case 'B':
-                    Motor_SetDirection(MOTOR_BWD);
-                    break;
-                case 'L':
-                    Motor_SetDirection(MOTOR_LEFT);
-                    break;
-                case 'R':
-                    Motor_SetDirection(MOTOR_RIGHT);
-                    break;
-                case 'S':
-                    Motor_SetDirection(MOTOR_STOP);
-                    break;
+            uint8_t command = rx_data;
+            switch (command) {
                 case 'q':
                     Motor_SetSpeed(100, 100);
+                    break;
+                // motor mode setup
+                case 'U':
+                    Motor_SetDirection(MOTOR_STOP);
+                    mode = MODE_OBSTACLE;
+                    break;
+                case 'V':
+                    Motor_SetDirection(MOTOR_STOP);
+                    mode = MODE_LINE;
+                    break;
+                case 'X':
+                    Motor_SetDirection(MOTOR_STOP);
+                    mode = MODE_MAZE;
+                    break;
+                case 'w':
+                case 'u':
+                case 'v':
+                case 'x':
+                case 'D':
+                case 'W':
+                    Motor_SetDirection(MOTOR_STOP);
+                    mode = MODE_MANUAL;
                     break;
                 default:
                     break;
             }
-            if(comand >= '0' && comand <= '9'){
-                uint8_t speed = (comand - '0') * 10;
+            if(mode == MODE_MANUAL){
+
+                switch (command){
+                    case 'F':
+                        Motor_SetDirection(MOTOR_FWD);
+                        break;
+                    case 'B':
+                        Motor_SetDirection(MOTOR_BWD);
+                        break;
+                    case 'L':
+                        Motor_SetDirection(MOTOR_LEFT);
+                        break;
+                    case 'R':
+                        Motor_SetDirection(MOTOR_RIGHT);
+                        break;
+                    case 'S':
+                        Motor_SetDirection(MOTOR_STOP);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if(command >= '0' && command <= '9'){
+                uint8_t speed = (command - '0') * 10;
                 Motor_SetSpeed(speed, speed);
             }
-
         }
         // test Ultrasonic  
         uint16_t distance = Ultrasonic_GetDistance();
