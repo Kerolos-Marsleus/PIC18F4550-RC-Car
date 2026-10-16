@@ -13,6 +13,8 @@
 #include "pwm.h"
 #include "ultrasonic.h"
 #include "obstacle.h"
+#include "line_follower.h"
+#include "ir_sensor.h"
 
 
 #define RESET_LED_DIR   TRISAbits.TRISA0
@@ -38,6 +40,7 @@ void main(void) {
     PWM_Init();
     Motor_Init();
     Ultrasonic_Init();
+    IR_Init();
     Motor_SetSpeed(0, 0);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
@@ -107,7 +110,9 @@ void main(void) {
             case MODE_OBSTACLE:
                 Obstacle_Run();
                 break;
-            
+            case MODE_LINE:
+                Line_Run();
+                break;
             default:
                 break;
         }

@@ -2,3 +2,4 @@
 - Dead-zone speed mapping (MIN_START)
 - Non-blocking timer (Timer0 1 ms tick) to replace delays
 - Battery voltage monitor (ADC)
+- state machine in ultrasonic that when blicked it return back spin to see a clear path then go forward

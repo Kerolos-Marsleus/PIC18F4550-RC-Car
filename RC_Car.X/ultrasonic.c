@@ -19,6 +19,7 @@ uint16_t Ultrasonic_GetDistance(void){
     US_TRIG = 1;
     __delay_us(10);
     US_TRIG = 0;
+    
     Timer1_Reset();
     PIR1bits.TMR1IF = 0;
     Timer1_Start();

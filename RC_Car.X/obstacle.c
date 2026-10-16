@@ -5,7 +5,7 @@
 #include "configure.h"
 #include <xc.h>
 
-#define OBSTACLE_LIMIT_CM   20
+#define OBSTACLE_LIMIT_CM   30
 #define REST_PERIOD_MS      60
 #define DEFAULT_SPIN_DIRECTION MOTOR_SPIN_RIGHT
 
