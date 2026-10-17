@@ -8,6 +8,11 @@
 
 void Line_Run(void){
     uint8_t value = IR_Read();
+    Line_Handler(value);
+    
+}
+
+void Line_Handler(uint8_t value){
     static uint8_t last_status = LAST_STATUS_LEFT;
     switch (value) {
         case IR_PATTERN_CENTER:

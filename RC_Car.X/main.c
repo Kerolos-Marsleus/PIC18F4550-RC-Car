@@ -15,6 +15,7 @@
 #include "obstacle.h"
 #include "line_follower.h"
 #include "ir_sensor.h"
+#include "maze.h"
 
 
 #define RESET_LED_DIR   TRISAbits.TRISA0
@@ -112,6 +113,9 @@ void main(void) {
                 break;
             case MODE_LINE:
                 Line_Run();
+                break;
+            case MODE_MAZE:
+                Maze_Run();
                 break;
             default:
                 break;
