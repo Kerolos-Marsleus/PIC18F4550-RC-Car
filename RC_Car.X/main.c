@@ -18,13 +18,13 @@
 #include "maze.h"
 
 
-#define RESET_LED_DIR   TRISAbits.TRISA0
-#define RESET_LED       LATAbits.LATA0
-#define MODE_MANUAL     1
-#define MODE_OBSTACLE   2
-#define MODE_LINE       3
-#define MODE_MAZE       4
-
+#define RESET_LED_DIR           TRISAbits.TRISA0
+#define RESET_LED               LATAbits.LATA0
+#define MODE_MANUAL             1
+#define MODE_OBSTACLE           2
+#define MODE_LINE               3
+#define MODE_MAZE               4
+#define DEFAULT_START_SPEED     70
 
 // shared between ISR and main
 volatile uint8_t rx_data;
@@ -42,11 +42,11 @@ void main(void) {
     Motor_Init();
     Ultrasonic_Init();
     IR_Init();
-    Motor_SetSpeed(0, 0);
+    Motor_Reset(DEFAULT_START_SPEED);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
     uint8_t mode = MODE_MANUAL;
-    
+    uint8_t speed = DEFAULT_START_SPEED;
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
@@ -54,18 +54,19 @@ void main(void) {
             switch (command) {
                 case 'q':
                     Motor_SetSpeed(100, 100);
+                    speed = 100;
                     break;
                 // motor mode setup
                 case 'U':
-                    Motor_SetDirection(MOTOR_STOP);
+                    Motor_Reset(speed);
                     mode = MODE_OBSTACLE;
                     break;
                 case 'V':
-                    Motor_SetDirection(MOTOR_STOP);
+                    Motor_Reset(speed);
                     mode = MODE_LINE;
                     break;
                 case 'X':
-                    Motor_SetDirection(MOTOR_STOP);
+                    Motor_Reset(speed);
                     mode = MODE_MAZE;
                     break;
                 case 'w':
@@ -74,7 +75,7 @@ void main(void) {
                 case 'x':
                 case 'D':
                 case 'W':
-                    Motor_SetDirection(MOTOR_STOP);
+                    Motor_Reset(speed);
                     mode = MODE_MANUAL;
                     break;
                 default:
@@ -103,7 +104,7 @@ void main(void) {
                 }
             }
             if(command >= '0' && command <= '9'){
-                uint8_t speed = (command - '0') * 10;
+                speed = (command - '0') * 10;
                 Motor_SetSpeed(speed, speed);
             }
         }
@@ -112,10 +113,10 @@ void main(void) {
                 Obstacle_Run();
                 break;
             case MODE_LINE:
-                Line_Run();
+                Line_Run(speed);
                 break;
             case MODE_MAZE:
-                Maze_Run();
+                Maze_Run(speed);
                 break;
             default:
                 break;

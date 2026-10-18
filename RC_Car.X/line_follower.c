@@ -4,40 +4,54 @@
 
 #define LAST_STATUS_LEFT    0
 #define LAST_STATUS_RIGHT   1
+#define LINE_MIN_TURN_SPEED 45
 
 
-void Line_Run(void){
+void Line_Run(uint8_t speed){
     uint8_t value = IR_Read();
-    Line_Handler(value);
+    Line_Handler(value, speed);
     
 }
 
-void Line_Handler(uint8_t value){
+void Line_Handler(uint8_t value,uint8_t speed){
     static uint8_t last_status = LAST_STATUS_LEFT;
+    uint8_t slower_speed = speed >> 1;
+    if(slower_speed < LINE_MIN_TURN_SPEED){
+        slower_speed = LINE_MIN_TURN_SPEED;
+    }
+    if(slower_speed > speed){
+        slower_speed = speed;
+    }
     switch (value) {
         case IR_PATTERN_CENTER:
+            Motor_SetSpeed(speed, speed);
             Motor_SetDirection(MOTOR_FWD);
             break;
         case IR_PATTERN_LEFT:
+            Motor_SetSpeed(slower_speed, slower_speed);
             Motor_SetDirection(MOTOR_SPIN_LEFT);
             last_status = LAST_STATUS_LEFT;
             break;
         case IR_PATTERN_RIGHT:
+            Motor_SetSpeed(slower_speed, slower_speed);
             Motor_SetDirection(MOTOR_SPIN_RIGHT);
             last_status = LAST_STATUS_RIGHT;
             break;
         case IR_PATTERN_SLIGHT_LEFT:
-            Motor_SetDirection(MOTOR_LEFT);
+            Motor_SetSpeed(slower_speed, speed);
+            Motor_SetDirection(MOTOR_FWD);
             last_status = LAST_STATUS_LEFT;
             break;
         case IR_PATTERN_SLIGHT_RIGHT:
-            Motor_SetDirection(MOTOR_RIGHT);
+            Motor_SetSpeed(speed, slower_speed);
+            Motor_SetDirection(MOTOR_FWD);
             last_status = LAST_STATUS_RIGHT;
             break;
         case IR_PATTERN_ALL_BLACK:
             Motor_SetDirection(MOTOR_STOP);
             break;
         case IR_PATTERN_LOST:
+            Motor_SetSpeed(slower_speed, slower_speed);
             if(last_status == LAST_STATUS_LEFT){
                 Motor_SetDirection(MOTOR_SPIN_LEFT);
             }else{

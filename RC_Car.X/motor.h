@@ -17,5 +17,5 @@
 void Motor_Init(void);
 void Motor_SetDirection(uint8_t pattern);
 void Motor_SetSpeed(uint8_t left_speed, uint8_t right_speed);
-
+void Motor_Reset (uint8_t speed);
 #endif	/* MOTOR_H */

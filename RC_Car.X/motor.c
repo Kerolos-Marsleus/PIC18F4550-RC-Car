@@ -17,3 +17,7 @@ void Motor_SetSpeed(uint8_t left_speed, uint8_t right_speed){
     PWM1_SetDuty(left_speed);
     PWM2_SetDuty(right_speed);
 }
+void Motor_Reset(uint8_t speed){
+    Motor_SetDirection(MOTOR_STOP);
+    Motor_SetSpeed(speed, speed);
+}
