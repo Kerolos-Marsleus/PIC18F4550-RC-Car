@@ -82,19 +82,39 @@ void main(void) {
                     break;
             }
             if(mode == MODE_MANUAL){
-
+                uint8_t slower_speed = Motor_TurnSpeed(speed);
                 switch (command){
                     case 'F':
+                        Motor_SetSpeed(speed, speed);
                         Motor_SetDirection(MOTOR_FWD);
                         break;
                     case 'B':
+                        Motor_SetSpeed(speed, speed);
                         Motor_SetDirection(MOTOR_BWD);
                         break;
                     case 'L':
+                        Motor_SetSpeed(speed, speed);
                         Motor_SetDirection(MOTOR_LEFT);
                         break;
                     case 'R':
+                        Motor_SetSpeed(speed, speed);
                         Motor_SetDirection(MOTOR_RIGHT);
+                        break;
+                    case 'G':
+                        Motor_SetSpeed(slower_speed, speed);
+                        Motor_SetDirection(MOTOR_FWD);
+                        break;
+                    case 'I':
+                        Motor_SetSpeed(speed, slower_speed);
+                        Motor_SetDirection(MOTOR_FWD);
+                        break;
+                    case 'H':
+                        Motor_SetSpeed(slower_speed, speed);
+                        Motor_SetDirection(MOTOR_BWD);
+                        break;
+                    case 'J':
+                        Motor_SetSpeed(speed, slower_speed);
+                        Motor_SetDirection(MOTOR_BWD);
                         break;
                     case 'S':
                         Motor_SetDirection(MOTOR_STOP);

@@ -21,3 +21,14 @@ void Motor_Reset(uint8_t speed){
     Motor_SetDirection(MOTOR_STOP);
     Motor_SetSpeed(speed, speed);
 }
+
+uint8_t Motor_TurnSpeed(uint8_t speed){
+    uint8_t slower_speed = speed >> 1;
+    if(slower_speed < LINE_MIN_TURN_SPEED){
+        slower_speed = LINE_MIN_TURN_SPEED;
+    }
+    if(slower_speed > speed){
+        slower_speed = speed;
+    }
+    return slower_speed;
+}
