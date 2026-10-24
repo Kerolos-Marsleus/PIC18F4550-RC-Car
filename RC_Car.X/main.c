@@ -16,16 +16,19 @@
 #include "line_follower.h"
 #include "ir_sensor.h"
 #include "maze.h"
+#include "timer0.h"
 
 
 #define RESET_LED_DIR           TRISAbits.TRISA0
 #define RESET_LED               LATAbits.LATA0
+#define TIMER_TEST_LED_DIR      TRISAbits.TRISA1
+#define TIMER_TEST_LED          LATAbits.LATA1
 #define MODE_MANUAL             1
 #define MODE_OBSTACLE           2
 #define MODE_LINE               3
 #define MODE_MAZE               4
 #define DEFAULT_START_SPEED     70
-
+#define LED_BLINK_MS            500
 // shared between ISR and main
 volatile uint8_t rx_data;
 volatile uint8_t rx_flag;
@@ -36,17 +39,20 @@ void main(void) {
     RESET_LED_DIR = 0;
     __delay_ms(100);
     RESET_LED = 0;
-    
+    TIMER_TEST_LED_DIR = 0;
+
     UART_Init();
     PWM_Init();
     Motor_Init();
     Ultrasonic_Init();
     IR_Init();
+    Timer0_Init();
     Motor_Reset(DEFAULT_START_SPEED);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
     uint8_t mode = MODE_MANUAL;
     uint8_t speed = DEFAULT_START_SPEED;
+    uint32_t timer0_timeStart = Timer0_getMs();
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
@@ -141,16 +147,23 @@ void main(void) {
             default:
                 break;
         }
-        
+        uint32_t timer0_timerEnd = Timer0_getMs();
+        if(timer0_timerEnd-timer0_timeStart >= LED_BLINK_MS){
+            TIMER_TEST_LED ^= 1;
+            timer0_timeStart += LED_BLINK_MS;
+        }
         
     }
 }
 
 void __interrupt() ISR(void)
 {   
-    if(PIR1bits.RCIF == 1){
+    if(PIR1bits.RCIF && PIE1bits.RCIE){
         rx_data = UART_ReceiveByte();
         rx_flag = 1;
         
+    }
+    if(INTCONbits.TMR0IF && INTCONbits.TMR0IE){
+        Timer0_Handler();
     }
 }
