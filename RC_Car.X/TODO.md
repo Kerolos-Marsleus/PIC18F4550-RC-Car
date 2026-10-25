@@ -1,6 +1,4 @@
-- Diagonals G/I/H/J (curve: both FWD, inner wheel slower, respect MIN_START)
 - Dead-zone speed mapping (MIN_START)
-- Non-blocking timer (Timer0 1 ms tick) to replace delays
 - Battery voltage monitor (ADC)
 - state machine in ultrasonic that when blicked it return back spin to see a clear path then go forward
 - in mode 3 it could be much more smoother than this i bieleve 

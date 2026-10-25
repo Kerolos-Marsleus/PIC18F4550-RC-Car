@@ -20,3 +20,12 @@ void Obstacle_Run(void){
     }
     __delay_ms(REST_PERIOD_MS);
 }
+
+static uint8_t Obstacle_Decide(uint16_t left_cm, uint16_t right_cm){
+    if(left_cm < right_cm){
+        // left = 40, right = 200 so go right
+        return MOTOR_SPIN_RIGHT;
+    }else{
+        return MOTOR_SPIN_LEFT;
+    }
+}
