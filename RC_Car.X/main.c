@@ -17,6 +17,7 @@
 #include "ir_sensor.h"
 #include "maze.h"
 #include "timer0.h"
+#include "servo.h"
 
 
 #define RESET_LED_DIR           TRISAbits.TRISA0
@@ -29,6 +30,7 @@
 #define MODE_MAZE               4
 #define DEFAULT_START_SPEED     70
 #define LED_BLINK_MS            500
+#define SERVO_DELAY             800U
 // shared between ISR and main
 volatile uint8_t rx_data;
 volatile uint8_t rx_flag;
@@ -39,6 +41,7 @@ void main(void) {
     RESET_LED_DIR = 0;
     __delay_ms(100);
     RESET_LED = 0;
+    TIMER_TEST_LED = 0;
     TIMER_TEST_LED_DIR = 0;
 
     UART_Init();
@@ -47,12 +50,16 @@ void main(void) {
     Ultrasonic_Init();
     IR_Init();
     Timer0_Init();
+    Servo_Init();
     Motor_Reset(DEFAULT_START_SPEED);
     INTCONbits.PEIE = 1;
     INTCONbits.GIE = 1;
     uint8_t mode = MODE_MANUAL;
     uint8_t speed = DEFAULT_START_SPEED;
     uint32_t timer0_timeStart = Timer0_getMs();
+    uint32_t servo_startTime = Timer0_getMs();
+    size_t index = 0;
+    const uint16_t Positions[3] = {500, 1500, 2500};
     while(1){
         if(rx_flag == 1){
             rx_flag = 0;
@@ -152,7 +159,17 @@ void main(void) {
             TIMER_TEST_LED ^= 1;
             timer0_timeStart += LED_BLINK_MS;
         }
+        // test servo.
+        uint32_t servo_endTime = Timer0_getMs();
         
+        if(index == 3){
+            index = 0;
+        }
+        if(servo_endTime - servo_startTime >=SERVO_DELAY){
+            servo_startTime += SERVO_DELAY;
+            Servo_SetPulseUs(Positions[index]);
+            index++;
+        }
     }
 }
 
@@ -165,5 +182,8 @@ void __interrupt() ISR(void)
     }
     if(INTCONbits.TMR0IF && INTCONbits.TMR0IE){
         Timer0_Handler();
+    }
+    if(PIR2bits.TMR3IF && PIE2bits.TMR3IE){
+        Servo_Handler();
     }
 }
